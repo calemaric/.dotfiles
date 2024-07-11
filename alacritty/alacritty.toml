@@ -1,0 +1,9 @@
+# Font config:
+[font]
+normal = {  family =  "Hack Nerd Font Mono", style = "Regular" }
+size = 16
+
+[env]
+TERM = "xterm-256color"
+
+
