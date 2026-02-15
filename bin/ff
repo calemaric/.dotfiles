@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+# Use fzf to select a folder from ~
+selected_folder=$(find ~ -maxdepth 3 -type d | fzf --prompt="Select folder: ")
+
+# Exit if nothing was selected
+if [ -z "$selected_folder" ]; then
+    exit 0
+fi
+
+# Create tmux session name from folder name
+session_name=$(basename "$selected_folder" | tr '.' '_')
+
+# Check if tmux session exists
+if tmux has-session -t "$session_name" 2>/dev/null; then
+    # Session exists, switch to it (or attach if outside tmux)
+    if [ -n "$TMUX" ]; then
+        tmux switch-client -t "$session_name"
+    else
+        tmux attach-session -t "$session_name"
+    fi
+else
+    # Session doesn't exist, create it
+    if [ -n "$TMUX" ]; then
+        tmux new-session -d -s "$session_name" -c "$selected_folder"
+        tmux switch-client -t "$session_name"
+    else
+        tmux new-session -s "$session_name" -c "$selected_folder"
+    fi
+fi
