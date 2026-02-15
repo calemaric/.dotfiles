@@ -1,0 +1,73 @@
+#!/bin/bash
+# open-project (op)
+# Select a project from ~/git/ or ~/.config and open it in tmux with mux
+# Usage: op [options]
+#   op          - Run mux start dev
+#   op -g       - Run mux start glide
+
+# Parse command line arguments
+MUX_COMMAND="dev"
+SESSION_SUFFIX=""
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -g|--glide)
+            MUX_COMMAND="glide"
+            SESSION_SUFFIX="-glide"
+            shift
+            ;;
+        -h|--help)
+            echo "Usage: op [options]"
+            echo "Options:"
+            echo "  -g, --glide   Start with 'mux start glide' instead of 'mux start dev'"
+            echo "  -h, --help    Show this help message"
+            exit 0
+            ;;
+        *)
+            echo "Unknown option: $1"
+            echo "Use 'op -h' for help"
+            exit 1
+            ;;
+    esac
+done
+
+# Get list of directories in ~/git/ (depth=1) and add ~/.config
+git_projects=$(find ~/git -maxdepth 1 -mindepth 1 -type d 2>/dev/null | sed 's|^.*/||' | sed 's|^|git/|')
+config_option=".config"
+
+# Combine options and show in fzf
+selected=$(printf "%s\n%s" "$config_option" "$git_projects" | fzf \
+    --prompt="  " \
+    --height=60% \
+    --reverse \
+    --bind=tab:down --bind=btab:up)
+
+if [ -z "$selected" ]; then
+    exit 0
+fi
+
+# Determine the full path and session name based on selection
+if [ "$selected" = ".config" ]; then
+    project_path="$HOME/.config"
+    session_name="config${SESSION_SUFFIX}"
+else
+    # Remove the git/ prefix to get the actual folder name
+    folder_name="${selected#git/}"
+    project_path="$HOME/git/$folder_name"
+    session_name="${folder_name}${SESSION_SUFFIX}"
+fi
+
+# Check if tmux session exists with the session name
+if tmux has-session -t "$session_name" 2>/dev/null; then
+    # Session exists, switch to it (or attach if outside tmux)
+    if [ -n "$TMUX" ]; then
+        # Already inside tmux, switch to the session
+        tmux switch-client -t "$session_name"
+    else
+        # Outside tmux, attach to the session
+        tmux attach-session -t "$session_name"
+    fi
+else
+    # Session doesn't exist, cd and run mux start
+    cd "$project_path" && tmuxinator start "$MUX_COMMAND"
+fi

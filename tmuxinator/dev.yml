@@ -1,0 +1,14 @@
+name: <%= File.basename(Dir.pwd) %>
+root: .
+
+windows:
+  - editor:
+      layout: even-vertical
+      panes:
+        - nvim
+        -
+  - agents:
+      layout: even-horizontal
+      panes:
+        - opencode
+        - opencode
