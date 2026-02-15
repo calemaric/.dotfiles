@@ -10,5 +10,5 @@ windows:
   - agents:
       layout: even-horizontal
       panes:
-        - opencode
-        - opencode
+        - <%= ENV.fetch('AGENT_COMMAND', 'opencode') %>
+        - <%= ENV.fetch('AGENT_COMMAND', 'opencode') %>
