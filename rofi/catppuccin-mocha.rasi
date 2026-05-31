@@ -1,0 +1,92 @@
+* {
+    bg:       #1e1e2eff;
+    mantle:   #181825ff;
+    surface0: #313244ff;
+    surface1: #45475aff;
+    overlay1: #7f849cff;
+    text:     #cdd6f4ff;
+    subtext1: #bac2deff;
+    mauve:    #cba6f7ff;
+    blue:     #89b4faff;
+
+    background-color: transparent;
+    text-color:       @text;
+}
+
+window {
+    background-color: @bg;
+    border:           2px;
+    border-color:     @mauve;
+    border-radius:    12px;
+    width:            600px;
+    padding:          16px;
+}
+
+mainbox {
+    background-color: transparent;
+    spacing:          10px;
+}
+
+inputbar {
+    background-color: @mantle;
+    border-radius:    8px;
+    padding:          10px 14px;
+    spacing:          8px;
+    children:         [ prompt, entry ];
+}
+
+prompt {
+    background-color: transparent;
+    text-color:       @mauve;
+    font:             "Hack Nerd Font Mono 11";
+}
+
+entry {
+    background-color: transparent;
+    text-color:       @text;
+    placeholder:      "Search...";
+    placeholder-color: @overlay1;
+    font:             "Hack Nerd Font Mono 11";
+}
+
+listview {
+    background-color: transparent;
+    lines:            8;
+    columns:          1;
+    spacing:          4px;
+    scrollbar:        false;
+}
+
+element {
+    background-color: transparent;
+    border-radius:    6px;
+    padding:          8px 12px;
+    spacing:          8px;
+    children:         [ element-icon, element-text ];
+}
+
+element selected {
+    background-color: @surface0;
+    text-color:       @mauve;
+}
+
+element-icon {
+    background-color: transparent;
+    size:             20px;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    font:             "Hack Nerd Font Mono 11";
+}
+
+message {
+    background-color: @mantle;
+    border-radius:    8px;
+    padding:          8px 12px;
+}
+
+textbox {
+    text-color: @subtext1;
+}
