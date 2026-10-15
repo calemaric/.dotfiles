@@ -1,41 +1,39 @@
 {
   "layer": "top",
-  "position": "top",
-  "height": 34,
+  "height": 42,
   "spacing": 6,
-  "modules-left": ["hyprland/workspaces", "hyprland/window"],
-  "modules-center": ["clock"],
-  "modules-right": ["bluetooth", "pulseaudio", "network", "cpu", "memory", "battery", "tray"],
-  "hyprland/workspaces": { "format": "{id}", "on-click": "activate" },
-  "hyprland/window": { "max-length": 50 },
-  "clock": { "format": "{:%a %d %b  %H:%M}", "tooltip-format": "<tt>{calendar}</tt>" },
-  "cpu": { "format": " {usage}%" },
-  "memory": { "format": " {percentage}%" },
-  "battery": {
-    "format": "{capacity}% {icon}",
-    "format-icons": ["", "", "", "", ""],
-    "states": { "warning": 30, "critical": 15 }
-  },
-  "network": {
-    "format-wifi": " {essid}",
-    "format-ethernet": " wired",
-    "format-disconnected": "offline"
-  },
-  "pulseaudio": {
-    "format": "{volume}% {icon}",
-    "format-muted": "muted",
-    "format-icons": { "default": ["", "", ""] },
-    "on-click": "pavucontrol"
-  },
-  "tray": { "spacing": 8 },
-  "bluetooth": {
-    "format": " {status}",
-    "format-connected": " {device_alias}",
-    "format-connected-battery": " {device_alias} {device_battery_percentage}%",
-    "tooltip-format": "{controller_alias}\n{num_connections} connected",
-    "tooltip-format-connected": "{controller_alias}\n{num_connections} connected\n\n{device_enumerate}",
-    "tooltip-format-enumerate-connected": "{device_alias}",
-    "tooltip-format-enumerate-connected-battery": "{device_alias} {device_battery_percentage}%",
-    "on-click": "blueman-manager"
-  }
+  "include": [
+    "./modules/mpris.jsonc",
+    "./modules/groups.jsonc",
+    "./modules/distro.jsonc",
+    "./modules/storage.jsonc",
+    "./modules/system.jsonc",
+    "./modules/power-profiles-daemon.jsonc",
+    "./modules/workspace.jsonc",
+    "./modules/idle-ihibitor.jsonc",
+    "./modules/backlight.jsonc",
+    "./modules/audio.jsonc",
+    "./modules/connections.jsonc",
+    "./modules/battery.jsonc",
+    "./modules/clock.jsonc",
+    "./modules/tray-notif.jsonc"
+  ],
+  "modules-left": [
+    "group/distro-group",
+    "group/storage",
+    "group/system"
+  ],
+  "modules-center": [
+    "group/mpris-group",
+    "hyprland/workspaces",
+    "idle_inhibitor"
+  ],
+  "modules-right": [
+    "backlight",
+    "group/audio",
+    "group/connections",
+    "battery",
+    "clock",
+    "group/tray-group"
+  ]
 }

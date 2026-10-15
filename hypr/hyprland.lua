@@ -3,7 +3,6 @@ local terminal    = "ghostty"
 local fileManager = "ghostty -e yazi"
 local menu        = "rofi -show drun"
 
-
 -- Monitor
 hl.monitor({
     output   = "",
@@ -12,36 +11,38 @@ hl.monitor({
     scale    = 1.5,
 })
 
-
 -- Autostart
 hl.on("hyprland.start", function()
     hl.exec_cmd("waybar")
+    hl.exec_cmd("hypridle")
+    hl.exec_cmd("wl-paste --type text --watch cliphist store")
+    hl.exec_cmd("wl-paste --type image --watch cliphist store")
 end)
-
 
 -- Environment variables
 hl.env("PATH", os.getenv("PATH") .. ":/home/calemaric/.local/share/mise/shims")
 hl.env("EDITOR", "nvim")
 hl.env("MOZ_ENABLE_WAYLAND", "1")
-hl.env("XCURSOR_SIZE",       "24")
-hl.env("QT_QPA_PLATFORM",    "wayland")
-hl.env("SDL_VIDEODRIVER",    "wayland")
-hl.env("GDK_BACKEND",        "wayland")
-
+hl.env("ELECTRON_OZONE_PLATFORM_AUTO", "1")
+hl.env("OBSIDIAN_USE_WAYLAN", "1")
+hl.env("XCURSOR_SIZE", "24")
+hl.env("QT_QPA_PLATFORM", "wayland")
+hl.env("SDL_VIDEODRIVER", "wayland")
+hl.env("GDK_BACKEND", "wayland")
 
 -- Input
 hl.config({
     input = {
         kb_layout  = "us",
         kb_variant = "dvp",
-        touchpad = {
-            natural_scroll       = true,
+        kb_options = "ctrl:swap_lwin_lctl,ctrl:swap_rwin_rctl",
+        touchpad   = {
+            natural_scroll       = false,
             tap_to_click         = false,
             clickfinger_behavior = true,
         },
     },
 })
-
 -- Touchpad gesture: 3-finger horizontal swipe to switch workspaces
 hl.gesture({
     fingers   = 3,
@@ -49,21 +50,19 @@ hl.gesture({
     action    = "workspace",
 })
 
-
 -- General
 hl.config({
     general = {
-        gaps_in    = 5,
-        gaps_out   = 10,
-        border_size = 2,
-        col = {
+        gaps_in     = 5,
+        gaps_out    = 5,
+        border_size = 1,
+        col         = {
             active_border   = { colors = { "rgba(cba6f7ff)", "rgba(89b4faff)" }, angle = 45 },
             inactive_border = "rgba(595959aa)",
         },
-        layout = "dwindle",
+        layout      = "dwindle",
     },
 })
-
 
 -- Decoration
 hl.config({
@@ -82,23 +81,20 @@ hl.config({
     },
 })
 
-
 -- Animations
 hl.config({ animations = { enabled = true } })
 
 hl.curve("myBezier", { type = "bezier", points = { { 0.05, 0.9 }, { 0.1, 1.05 } } })
 
-hl.animation({ leaf = "windows",    enabled = true, speed = 3, bezier = "myBezier" })
+hl.animation({ leaf = "windows", enabled = true, speed = 3, bezier = "myBezier" })
 hl.animation({ leaf = "windowsOut", enabled = true, speed = 3, bezier = "default", style = "popin 80%" })
-hl.animation({ leaf = "fade",       enabled = true, speed = 3, bezier = "default" })
+hl.animation({ leaf = "fade", enabled = true, speed = 3, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 2.5, bezier = "default" })
-
 
 -- Layout
 hl.config({
     dwindle = { preserve_split = true },
 })
-
 
 -- Misc
 hl.config({
@@ -108,12 +104,27 @@ hl.config({
     },
 })
 
-
 -- Apps
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("zen"))
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("flatpak run md.obsidian.Obsidian"))
+
+-- Firefox Picture-in-Picture: float it and keep it visible on every workspace
+hl.window_rule({
+    name  = "firefox-pip",
+    match = { title = "^Picture-in-Picture$" },
+
+    float          = true,
+    pin            = true,
+    size           = { "monitor_w * 0.25", "monitor_h * 0.25" },
+    move           = { "monitor_w - window_w - 20", "monitor_h - window_h - 20" },
+    -- Firefox/Zen randomly fire a maximize/fullscreen request at the PiP
+    -- window on their own (long-standing Gecko bug); ignore those so it
+    -- can't grow to fill the screen. Doesn't block manual resize/move.
+    suppress_event = "fullscreen maximize",
+})
 
 -- Window management
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
@@ -122,47 +133,52 @@ hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"))
 
 -- Focus movement
-hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
 
 -- Move windows
-hl.bind(mainMod .. " + SHIFT + left",  hl.dsp.window.move({ direction = "left" }))
+hl.bind(mainMod .. " + SHIFT + left", hl.dsp.window.move({ direction = "left" }))
 hl.bind(mainMod .. " + SHIFT + right", hl.dsp.window.move({ direction = "right" }))
-hl.bind(mainMod .. " + SHIFT + up",    hl.dsp.window.move({ direction = "up" }))
-hl.bind(mainMod .. " + SHIFT + down",  hl.dsp.window.move({ direction = "down" }))
+hl.bind(mainMod .. " + SHIFT + up", hl.dsp.window.move({ direction = "up" }))
+hl.bind(mainMod .. " + SHIFT + down", hl.dsp.window.move({ direction = "down" }))
 
 -- Workspaces (Programmer Dvorak: digits are shifted, bind to unshifted symbols)
 local dvpKeys = {
-    "ampersand", "bracketleft", "braceleft",  "braceright", "parenleft",
-    "equal",     "asterisk",    "parenright", "plus",       "bracketright",
+    "ampersand", "bracketleft", "braceleft", "braceright", "parenleft",
+    "equal", "asterisk", "parenright", "plus", "bracketright",
 }
 for i, key in ipairs(dvpKeys) do
-    hl.bind(mainMod .. " + " .. key,           hl.dsp.focus({ workspace = i }))
-    hl.bind(mainMod .. " + CTRL + " .. key,    hl.dsp.window.move({ workspace = i }))
+    hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
+    hl.bind(mainMod .. " + CTRL + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
 -- Scroll through workspaces
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 
 -- Mouse window management
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(),   { mouse = true })
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 -- Brightness
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("brightnessctl set 5%+"),  { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"),  { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl set 5%+"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl set 5%-"), { locked = true, repeating = true })
 
 -- Volume
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),      { locked = true, repeating = true })
-hl.bind("XF86AudioMute",        hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"),     { locked = true })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
+    { locked = true, repeating = true })
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
+    { locked = true, repeating = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
+
+-- Clipboard
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy"))
 
 -- Screenshots
 hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("grimblast copy area"))
-hl.bind("SHIFT + Print",           hl.dsp.exec_cmd("grimblast copy screen"))
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("grimblast copy screen"))
 
 -- Session
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit"))
+hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("loginctl lock-session"))

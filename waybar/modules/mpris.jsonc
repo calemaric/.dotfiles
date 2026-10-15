@@ -1,0 +1,28 @@
+{
+  "mpris": {
+    "format": "󰎈 <span size='11pt'>{title}</span>",
+    "format-paused": "󰏤 <span size='11pt'>{title}</span>",
+    "player-icons": {
+      "default": "",
+      "firefox": "󰈹",
+      "zen": "󰈹",
+      "spotify": ""
+    },
+    "status-icons": {
+      "paused": "󰏤"
+    },
+    "max-length": 40,
+    "tooltip-format": "{title} — {artist}\n{player}",
+    "on-click": "playerctl play-pause"
+  },
+  "custom/mpris-prev": {
+    "format": "󰒮",
+    "on-click": "playerctl previous",
+    "tooltip": false
+  },
+  "custom/mpris-next": {
+    "format": "󰒭",
+    "on-click": "playerctl next",
+    "tooltip": false
+  }
+}
